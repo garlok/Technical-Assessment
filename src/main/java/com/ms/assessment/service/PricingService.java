@@ -4,7 +4,7 @@ import com.ms.assessment.model.BinanceResponseDTO;
 import com.ms.assessment.model.HuobiDTO;
 import com.ms.assessment.model.HuobiResponseDTO;
 import com.ms.assessment.model.Pricing;
-import com.ms.assessment.repository.PricingRespository;
+import com.ms.assessment.repository.PricingRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
@@ -25,7 +25,7 @@ import static com.ms.assessment.constants.ResourcePath.HUOBI_API_URL;
 public class PricingService {
 
     @Autowired
-    PricingRespository pricingRepository;
+    PricingRepository pricingRepository;
 
     public void fetchAndSavePricing() {
         RestTemplate restTemplate = new RestTemplate();
@@ -57,7 +57,7 @@ public class PricingService {
                 }
             });
         }
-        //To all huobi list to a lists
+        //To all Huobi list to a lists
         if (huobiResponseDTO != null && huobiResponseDTO.getData() != null) {
             huobiResponseDTO.getData().forEach(huobiDTO -> {
                 String symbol = huobiDTO.getSymbol().toUpperCase();
