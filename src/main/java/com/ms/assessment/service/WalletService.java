@@ -15,9 +15,9 @@ public class WalletService {
     @Autowired
     WalletRepository walletRepository;
 
-    public BalanceResponseDTO getBalanceByOwner(String owner) throws Exception {
+    public BalanceResponseDTO getBalanceByUserName(String userName) throws Exception {
         try{
-            Optional<Wallet> wallets = walletRepository.findByUserUserName(owner);
+            Optional<Wallet> wallets = walletRepository.findByUserUserName(userName);
             if(wallets.isPresent()){
                 return BalanceResponseDTO.builder()
                         .userName(wallets.get().getUser().getUserName())
