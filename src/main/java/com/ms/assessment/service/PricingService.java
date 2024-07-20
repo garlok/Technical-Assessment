@@ -1,9 +1,11 @@
 package com.ms.assessment.service;
 
 import com.ms.assessment.model.BinanceResponseDTO;
-import com.ms.assessment.model.Pricing;
+import com.ms.assessment.model.HuobiDTO;
 import com.ms.assessment.model.HuobiResponseDTO;
-import com.ms.assessment.repository.PricingRespository;
+import com.ms.assessment.model.Pricing;
+import com.ms.assessment.repository.PricingRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
@@ -18,81 +20,64 @@ import java.util.stream.Collectors;
 import static com.ms.assessment.constants.ResourcePath.BINANCE_API_URL;
 import static com.ms.assessment.constants.ResourcePath.HUOBI_API_URL;
 
+@Slf4j
 @Service
 public class PricingService {
 
     @Autowired
-    PricingRespository pricingRepository;
+    PricingRepository pricingRepository;
 
     public void fetchAndSavePricing() {
         RestTemplate restTemplate = new RestTemplate();
-
-        ResponseEntity<List<BinanceResponseDTO>> binanceResponse = restTemplate.exchange(
-                BINANCE_API_URL,
-                HttpMethod.GET,
-                null,
-                new ParameterizedTypeReference<List<BinanceResponseDTO>>() {
-                });
-        List<BinanceResponseDTO> binanceResponseDTOList = binanceResponse.getBody();
-
-        ResponseEntity<HuobiResponseDTO> huobiResponse = restTemplate.exchange(
-                HUOBI_API_URL,
-                HttpMethod.GET,
-                null,
-                new ParameterizedTypeReference<HuobiResponseDTO>(){
-                });
-        HuobiResponseDTO huobiResponseDTO = huobiResponse.getBody();
+        List<BinanceResponseDTO> binanceResponseDTOList = fetchBinanceData(restTemplate);
+        HuobiResponseDTO huobiResponseDTO = fetchHuobiData(restTemplate);
 
         List<Pricing> existingPricings = pricingRepository.findAll();
         Map<String, Pricing> pricingMap = existingPricings.stream()
                 .collect(Collectors.toMap(Pricing::getSymbol, p -> p));
-        List<Pricing> updatedPricings = new ArrayList<>();
+        log.debug("[pricingService] fetchAndSavePricing pricingMap.size(): {}", pricingMap.size());
 
+        List<Pricing> updatedPricings = new ArrayList<>();
         Set<String> symbolsInApiResponses = new HashSet<>();
 
+        //To include all binance list to a lists
         if (binanceResponseDTOList != null && !binanceResponseDTOList.isEmpty()) {
             binanceResponseDTOList.forEach(binanceResponseDTO -> {
                 String symbol = binanceResponseDTO.getSymbol().toUpperCase();
                 symbolsInApiResponses.add(symbol);
-                Pricing newPricing = Pricing.builder()
-                        .symbol(symbol)
-                        .bestAskPrice(binanceResponseDTO.getAskPrice())
-                        .bestBidPrice(binanceResponseDTO.getBidPrice())
-                        .build();
-
                 Pricing existingPricing = pricingMap.get(symbol);
                 if (existingPricing != null) {
-                    updateBestPricing(existingPricing, newPricing.getBestBidPrice(), newPricing.getBestAskPrice());
+                    existingPricing.setBestSellPrice(binanceResponseDTO.getSell());
+                    existingPricing.setBestBuyPrice(binanceResponseDTO.getBuy());
                     updatedPricings.add(existingPricing);
                 } else {
-                    newPricing.setId(UUID.randomUUID());
+                    //To add a new one into the lists
+                    Pricing newPricing = getNewPricing(binanceResponseDTO, null);
                     updatedPricings.add(newPricing);
                 }
             });
         }
-
+        //To all Huobi list to a lists
         if (huobiResponseDTO != null && huobiResponseDTO.getData() != null) {
             huobiResponseDTO.getData().forEach(huobiDTO -> {
                 String symbol = huobiDTO.getSymbol().toUpperCase();
-                symbolsInApiResponses.add(symbol);
-                Pricing newPricing = Pricing.builder()
-                        .symbol(symbol)
-                        .bestAskPrice(huobiDTO.getAsk())
-                        .bestBidPrice(huobiDTO.getBid())
-                        .build();
 
+                //To check binance list is existed in the list
                 Pricing existingPricing = updatedPricings.stream()
                         .filter(pricing -> pricing.getSymbol().equals(symbol))
                         .findFirst()
                         .orElse(null);
                 if (existingPricing != null) {
-                    updateBestPricing(existingPricing, newPricing.getBestBidPrice(), newPricing.getBestAskPrice());
+                    //check the existing price and update
+                    updateBestPricing(existingPricing, huobiDTO.getSell(), huobiDTO.getBuy());
                 } else {
+                    symbolsInApiResponses.add(symbol);
                     existingPricing = pricingMap.get(symbol);
                     if (existingPricing != null) {
-                        updateBestPricing(existingPricing, newPricing.getBestBidPrice(), newPricing.getBestAskPrice());
+                        existingPricing.setBestBuyPrice(huobiDTO.getBuy());
+                        existingPricing.setBestSellPrice(huobiDTO.getSell());
                     } else {
-                        newPricing.setId(UUID.randomUUID()); // Set a new ID for new entries
+                        Pricing newPricing = getNewPricing(null, huobiDTO);
                         updatedPricings.add(newPricing);
                     }
                 }
@@ -100,20 +85,79 @@ public class PricingService {
         }
         List<Pricing> toRemove = existingPricings.stream()
                 .filter(pricing -> !symbolsInApiResponses.contains(pricing.getSymbol()))
-                .collect(Collectors.toList());
+                .toList();
+        log.debug("[pricingService] fetchAndSavePricing symbolsInApiResponses.size(): {}", symbolsInApiResponses.size());
 
         // Save to the database
+        log.info("[pricingService] fetchAndSavePricing updatedPricings.size(): {}", updatedPricings.size());
         pricingRepository.saveAll(updatedPricings);
-        pricingRepository.deleteAll(toRemove);
+
+        //To delete in the database
+        log.info("[pricingService] toRemove.size(): {}", toRemove.size());
+    }
+
+    private List<BinanceResponseDTO> fetchBinanceData(RestTemplate restTemplate) {
+        try {
+            ResponseEntity<List<BinanceResponseDTO>> response = restTemplate.exchange(
+                    BINANCE_API_URL,
+                    HttpMethod.GET,
+                    null,
+                    new ParameterizedTypeReference<>() {
+                    }
+            );
+            return response.getBody();
+        } catch (Exception e) {
+            log.error("Failed to fetch Binance data", e);
+            return Collections.emptyList();
+        }
+    }
+
+    private HuobiResponseDTO fetchHuobiData(RestTemplate restTemplate) {
+        try {
+            ResponseEntity<HuobiResponseDTO> response = restTemplate.exchange(
+                    HUOBI_API_URL,
+                    HttpMethod.GET,
+                    null,
+                    new ParameterizedTypeReference<>() {
+                    }
+            );
+            return response.getBody();
+        } catch (Exception e) {
+            log.error("Failed to fetch Huobi data", e);
+            return null;
+        }
+    }
+
+    private static Pricing getNewPricing(BinanceResponseDTO binanceResponseDTO, HuobiDTO huobiDTO) {
+        String symbol = "";
+        BigDecimal askPrice = null;
+        BigDecimal bidPrice = null;
+
+        if(binanceResponseDTO != null){
+            symbol = binanceResponseDTO.getSymbol().toUpperCase();
+            askPrice = binanceResponseDTO.getBuy();
+            bidPrice = binanceResponseDTO.getSell();
+        } else if (huobiDTO != null){
+            symbol = huobiDTO.getSymbol().toUpperCase();
+            askPrice = huobiDTO.getBuy();
+            bidPrice = huobiDTO.getSell();
+        }
+
+        return Pricing.builder()
+                .id(UUID.randomUUID())
+                .symbol(symbol)
+                .bestBuyPrice(askPrice)
+                .bestSellPrice(bidPrice)
+                .build();
     }
 
     private void updateBestPricing(Pricing existingDTO, BigDecimal newBidPrice,
                                    BigDecimal newAskPrice) {
-        if (newBidPrice.compareTo(existingDTO.getBestBidPrice()) > 0) {
-            existingDTO.setBestBidPrice(newBidPrice);
+        if (existingDTO.getBestSellPrice() == null || newBidPrice != null && newBidPrice.compareTo(existingDTO.getBestSellPrice())  > 0) {
+            existingDTO.setBestSellPrice(newBidPrice);
         }
-        if (newAskPrice.compareTo(existingDTO.getBestAskPrice()) < 0) {
-            existingDTO.setBestAskPrice(newAskPrice);
+        if (existingDTO.getBestBuyPrice() == null || newAskPrice != null && newAskPrice.compareTo(existingDTO.getBestBuyPrice()) < 0) {
+            existingDTO.setBestBuyPrice(newAskPrice);
         }
     }
 }

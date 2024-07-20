@@ -22,6 +22,6 @@ public class Pricing {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
     private String symbol;
-    private BigDecimal bestBidPrice;
-    private BigDecimal bestAskPrice;
+    private BigDecimal bestSellPrice;
+    private BigDecimal bestBuyPrice;
 }

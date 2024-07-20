@@ -1,0 +1,22 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:technical-test
+    driverClassName: org.h2.Driver
+    username: sa
+    password: password
+  h2:
+    console:
+      enabled: true
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: update
+
+scheduler:
+  fixedRate: 10000
+
+logging:
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss, Asia/Singapore} [%blue(%t)] %yellow(%C{1.}): %replace(%msg){'[\n\r\t]','-'}%n%throwable"
+  level:
+    root: INFO
