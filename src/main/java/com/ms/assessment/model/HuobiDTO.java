@@ -1,5 +1,6 @@
 package com.ms.assessment.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,8 +11,8 @@ import java.math.BigDecimal;
 public class HuobiDTO {
 
     private String symbol;
-    private BigDecimal bid;
-    private BigDecimal bidSize;
-    private BigDecimal ask;
-    private BigDecimal askSize;
+    @JsonProperty("bid")
+    private BigDecimal sell;
+    @JsonProperty("ask")
+    private BigDecimal buy;
 }
