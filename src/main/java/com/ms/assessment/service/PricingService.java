@@ -35,7 +35,7 @@ public class PricingService {
         List<Pricing> existingPricings = pricingRepository.findAll();
         Map<String, Pricing> pricingMap = existingPricings.stream()
                 .collect(Collectors.toMap(Pricing::getSymbol, p -> p));
-        log.info("[pricingService] pricingMap.size(): {}", pricingMap.size());
+        log.debug("[pricingService] fetchAndSavePricing pricingMap.size(): {}", pricingMap.size());
 
         List<Pricing> updatedPricings = new ArrayList<>();
         Set<String> symbolsInApiResponses = new HashSet<>();
@@ -85,11 +85,11 @@ public class PricingService {
         }
         List<Pricing> toRemove = existingPricings.stream()
                 .filter(pricing -> !symbolsInApiResponses.contains(pricing.getSymbol()))
-                .collect(Collectors.toList());
-        log.info("[pricingService] symbolsInApiResponses.size(): {}", symbolsInApiResponses.size());
+                .toList();
+        log.debug("[pricingService] fetchAndSavePricing symbolsInApiResponses.size(): {}", symbolsInApiResponses.size());
 
         // Save to the database
-        log.info("[pricingService] updatedPricings.size(): {}", updatedPricings.size());
+        log.info("[pricingService] fetchAndSavePricing updatedPricings.size(): {}", updatedPricings.size());
         pricingRepository.saveAll(updatedPricings);
 
         //To delete in the database
@@ -102,7 +102,8 @@ public class PricingService {
                     BINANCE_API_URL,
                     HttpMethod.GET,
                     null,
-                    new ParameterizedTypeReference<List<BinanceResponseDTO>>() {}
+                    new ParameterizedTypeReference<>() {
+                    }
             );
             return response.getBody();
         } catch (Exception e) {
@@ -117,7 +118,8 @@ public class PricingService {
                     HUOBI_API_URL,
                     HttpMethod.GET,
                     null,
-                    new ParameterizedTypeReference<HuobiResponseDTO>() {}
+                    new ParameterizedTypeReference<>() {
+                    }
             );
             return response.getBody();
         } catch (Exception e) {

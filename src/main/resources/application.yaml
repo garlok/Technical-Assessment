@@ -18,3 +18,5 @@ scheduler:
 logging:
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss, Asia/Singapore} [%blue(%t)] %yellow(%C{1.}): %replace(%msg){'[\n\r\t]','-'}%n%throwable"
+  level:
+    root: INFO
