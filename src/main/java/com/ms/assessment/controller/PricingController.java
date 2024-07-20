@@ -2,6 +2,8 @@ package com.ms.assessment.controller;
 
 import com.ms.assessment.model.CryptoTradingDTO;
 import com.ms.assessment.service.PricingService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,12 +17,15 @@ import java.util.List;
 import static com.ms.assessment.constants.ResourcePath.LISTING;
 import static com.ms.assessment.constants.ResourcePath.PRICES;
 
+@Tag(name = "Pricing API")
 @RestController
 @RequestMapping(PRICES)
 public class PricingController {
     @Autowired
     PricingService pricingService;
 
+    @Operation(summary = "To get latest Crypto Trading Listing with the best price",
+            description = "To get latest Crypto Trading Listing with the best price")
     @GetMapping(LISTING)
     public ResponseEntity<?> getLatestBestPrice(@RequestParam(value = "cryptoTrading", required = false) String symbol) {
         try {

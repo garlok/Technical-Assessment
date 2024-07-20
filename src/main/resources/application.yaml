@@ -14,6 +14,14 @@ spring:
     show-sql: false
     properties:
       hibernate.format_sql: false
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+  swagger-ui:
+    enabled: true
+    url: /v3/api-docs
+    disable-swagger-default-url: true
+    packageToScan: com.ms.assessment.controller
 
 scheduler:
   fixedRate: 10000
