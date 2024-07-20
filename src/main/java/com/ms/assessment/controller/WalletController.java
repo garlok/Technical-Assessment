@@ -23,9 +23,9 @@ public class WalletController {
     @Operation(summary = "To retrieve the user’s crypto currencies wallet balance",
             description = "To retrieve the user’s crypto currencies wallet balance")
     @GetMapping(ResourcePath.GET_BALANCE_API_URL)
-    public ResponseEntity<?> getBalanceByOwner(@PathVariable String owner) throws Exception {
+    public ResponseEntity<?> getBalanceByOwner(@PathVariable String userName) throws Exception {
         try {
-            BalanceResponseDTO balanceResponseDTO = walletService.getBalanceByOwner(owner);
+            BalanceResponseDTO balanceResponseDTO = walletService.getBalanceByUserName(userName);
             return ResponseEntity.ok(balanceResponseDTO);
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body(e.getMessage());
