@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -27,6 +28,8 @@ public class Pricing {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
     private String symbol;
+    @Column(precision = 19, scale = 6)
     private BigDecimal bestSellPrice;
+    @Column(precision = 19, scale = 6)
     private BigDecimal bestBuyPrice;
 }

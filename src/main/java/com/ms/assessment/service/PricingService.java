@@ -1,11 +1,13 @@
 package com.ms.assessment.service;
 
+import com.ms.assessment.model.CryptoTradingDTO;
 import com.ms.assessment.model.BinanceResponseDTO;
 import com.ms.assessment.model.HuobiDTO;
 import com.ms.assessment.model.HuobiResponseDTO;
 import com.ms.assessment.model.Pricing;
 import com.ms.assessment.repository.PricingRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
@@ -100,6 +102,29 @@ public class PricingService {
 
         //To delete in the database
         log.info("[pricingService] toRemove.size(): {}", toRemove.size());
+    }
+
+    public List<CryptoTradingDTO> getLatestBestAggregatedPrice(String symbol) {
+        List<Pricing> pricingList;
+        List<CryptoTradingDTO> cryptoTradingDTOList = new ArrayList<>();
+
+        if (ObjectUtils.isNotEmpty(symbol)) {
+            pricingList = pricingRepository.findBySymbol(symbol);
+        } else {
+            pricingList = pricingRepository.findAll();
+        }
+
+        if (!pricingList.isEmpty()) {
+            pricingList.forEach(pricing -> {
+                CryptoTradingDTO cryptoTradingDTO = CryptoTradingDTO.builder()
+                        .symbol(pricing.getSymbol())
+                        .bestSellPrice(pricing.getBestSellPrice())
+                        .bestBuyPrice(pricing.getBestBuyPrice())
+                        .build();
+                cryptoTradingDTOList.add(cryptoTradingDTO);
+            });
+        }
+        return cryptoTradingDTOList;
     }
 
     private List<BinanceResponseDTO> fetchBinanceData(RestTemplate restTemplate) {
