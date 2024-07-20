@@ -1,7 +1,7 @@
 package com.ms.assessment.service;
 
-import com.ms.assessment.model.CryptoTradingDTO;
 import com.ms.assessment.model.BinanceResponseDTO;
+import com.ms.assessment.model.CryptoTradingDTO;
 import com.ms.assessment.model.HuobiDTO;
 import com.ms.assessment.model.HuobiResponseDTO;
 import com.ms.assessment.model.Pricing;

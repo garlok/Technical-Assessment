@@ -1,9 +1,5 @@
 package com.ms.assessment.model;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.ms.assessment.config.BigDecimalDeserializer;
-import com.ms.assessment.config.BigDecimalSerializer;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
