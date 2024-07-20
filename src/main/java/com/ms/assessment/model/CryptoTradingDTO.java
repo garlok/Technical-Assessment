@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.ms.assessment.config.BigDecimalDeserializer;
 import com.ms.assessment.config.BigDecimalSerializer;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,15 +13,17 @@ import java.math.BigDecimal;
 
 @Getter
 @Setter
-public class BinanceResponseDTO {
+@Builder
+public class CryptoTradingDTO {
 
+    @JsonProperty(value = "Crypto Trading")
     private String symbol;
-    @JsonProperty("bidPrice")
     @JsonSerialize(using = BigDecimalSerializer.class)
     @JsonDeserialize(using = BigDecimalDeserializer.class)
-    private BigDecimal sell;
-    @JsonProperty("askPrice")
+    @JsonProperty(value = "Best Bid/Sell Price")
+    private BigDecimal bestSellPrice;
+    @JsonProperty(value = "Best Ask/Buy Price")
     @JsonSerialize(using = BigDecimalSerializer.class)
     @JsonDeserialize(using = BigDecimalDeserializer.class)
-    private BigDecimal buy;
+    private BigDecimal bestBuyPrice;
 }
