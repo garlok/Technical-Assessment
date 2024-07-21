@@ -11,8 +11,8 @@ public class SwaggerConfig {
     @Bean
     public OpenAPI springOpenApi(){
         return new OpenAPI()
-                .info(new Info().title("Aquariux Technical Assessment")
-                        .description("Aquariux Technical Assessment")
+                .info(new Info().title("Technical Assessment")
+                        .description("Technical Assessment")
                         .version("1.0"));
 
     }
