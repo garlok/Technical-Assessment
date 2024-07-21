@@ -1,7 +1,7 @@
 package com.ms.assessment.controller;
 
 import com.ms.assessment.constants.ResourcePath;
-import com.ms.assessment.model.BalanceResponseDTO;
+import com.ms.assessment.model.WalletResponseDTO;
 import com.ms.assessment.service.WalletService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "Wallet API")
 @RestController
-@RequestMapping(ResourcePath.WALLETS)
+@RequestMapping(ResourcePath.WALLET)
 public class WalletController {
 
     @Autowired
@@ -23,10 +23,10 @@ public class WalletController {
     @Operation(summary = "To retrieve the user’s crypto currencies wallet balance",
             description = "To retrieve the user’s crypto currencies wallet balance")
     @GetMapping(ResourcePath.GET_BALANCE_API_URL)
-    public ResponseEntity<?> getBalanceByOwner(@PathVariable String userName) throws Exception {
+    public ResponseEntity<?> getWalletByUserName(@PathVariable String userName) throws Exception {
         try {
-            BalanceResponseDTO balanceResponseDTO = walletService.getBalanceByUserName(userName);
-            return ResponseEntity.ok(balanceResponseDTO);
+            WalletResponseDTO walletResponseDTO = walletService.getWalletByUserName(userName);
+            return ResponseEntity.ok(walletResponseDTO);
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body(e.getMessage());
         }

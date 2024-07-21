@@ -19,8 +19,19 @@ public class BinanceResponseDTO {
     @JsonSerialize(using = BigDecimalSerializer.class)
     @JsonDeserialize(using = BigDecimalDeserializer.class)
     private BigDecimal sell;
+
+    @JsonProperty("bidQty")
+    @JsonSerialize(using = BigDecimalSerializer.class)
+    @JsonDeserialize(using = BigDecimalDeserializer.class)
+    private BigDecimal sellQuantity;
+
     @JsonProperty("askPrice")
     @JsonSerialize(using = BigDecimalSerializer.class)
     @JsonDeserialize(using = BigDecimalDeserializer.class)
     private BigDecimal buy;
+
+    @JsonProperty("askQty")
+    @JsonSerialize(using = BigDecimalSerializer.class)
+    @JsonDeserialize(using = BigDecimalDeserializer.class)
+    private BigDecimal buyQuantity;
 }

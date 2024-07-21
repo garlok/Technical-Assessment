@@ -15,11 +15,11 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 import static com.ms.assessment.constants.ResourcePath.LISTING;
-import static com.ms.assessment.constants.ResourcePath.PRICES;
+import static com.ms.assessment.constants.ResourcePath.PRICE;
 
 @Tag(name = "Pricing API")
 @RestController
-@RequestMapping(PRICES)
+@RequestMapping(PRICE)
 public class PricingController {
     @Autowired
     PricingService pricingService;

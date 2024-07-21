@@ -7,29 +7,30 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import java.math.BigDecimal;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import java.time.OffsetDateTime;
 import java.util.UUID;
 
+@Data
 @Getter
 @Setter
 @Entity
 @Builder
-@Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Pricing {
-
+public class Asset {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
     private String symbol;
-    @Column(precision = 19, scale = 6)
-    private BigDecimal bestSellPrice;
-    @Column(precision = 19, scale = 6)
-    private BigDecimal bestBuyPrice;
+    private int quantity;
+    @ManyToOne
+    @JoinColumn(name = "userName", referencedColumnName = "userName", nullable = false)
+    private Users user;
+    private OffsetDateTime updatedTime;
 }

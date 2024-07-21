@@ -15,12 +15,24 @@ import java.math.BigDecimal;
 public class HuobiDTO {
 
     private String symbol;
+
     @JsonProperty("bid")
     @JsonSerialize(using = BigDecimalSerializer.class)
     @JsonDeserialize(using = BigDecimalDeserializer.class)
     private BigDecimal sell;
+
+    @JsonProperty("bidSize")
+    @JsonSerialize(using = BigDecimalSerializer.class)
+    @JsonDeserialize(using = BigDecimalDeserializer.class)
+    private BigDecimal sellQuantity;
+
     @JsonProperty("ask")
     @JsonSerialize(using = BigDecimalSerializer.class)
     @JsonDeserialize(using = BigDecimalDeserializer.class)
     private BigDecimal buy;
+
+    @JsonProperty("askSize")
+    @JsonSerialize(using = BigDecimalSerializer.class)
+    @JsonDeserialize(using = BigDecimalDeserializer.class)
+    private BigDecimal buyQuantity;
 }
