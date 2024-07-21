@@ -64,15 +64,15 @@ public class TradingService {
                 .build();
         if (ActionType.BUY.equals(actionType)) {
             if(tradeRequestDTO.getBuyQuantity() == 0) {
-                throw new Exception("Buy quantity cannot be zero.");
+                throw new Exception("Buy quantity cannot be zero");
             }
             if(cryptoTradingDTO.getBuyQuantity() >= tradeRequestDTO.getBuyQuantity()) {
                 tradingInfoDTO.setRequestQuantity(tradeRequestDTO.getBuyQuantity());
                 tradingInfoDTO.setActionType(ActionType.BUY);
-                tradingResponseDTO.setAssetsQuantity(tradeRequestDTO.getBuyQuantity());
+                tradingResponseDTO.setAssetsBuyQuantity(tradeRequestDTO.getBuyQuantity());
                 performOperation(tradingInfoDTO, cryptoTradingDTO, userWallet, assetList, tradingResponseDTO);
             } else {
-                throw new Exception("Insufficient asset quantity to buy. Current quantity for "
+                throw new Exception("Insufficient asset quantity to buy/ask. \r\nCurrent quantity for "
                         + cryptoTradingDTO.getSymbol() + " is " + cryptoTradingDTO.getBuyQuantity());
             }
         } else if (ActionType.SELL.equals(actionType)){
@@ -82,7 +82,7 @@ public class TradingService {
             if(cryptoTradingDTO.getSellQuantity() >= tradeRequestDTO.getSellQuantity()) {
                 tradingInfoDTO.setRequestQuantity(tradeRequestDTO.getSellQuantity());
                 tradingInfoDTO.setActionType(ActionType.SELL);
-                tradingResponseDTO.setAssetsQuantity(tradeRequestDTO.getSellQuantity());
+                tradingResponseDTO.setAssetsSellQuantity(tradeRequestDTO.getSellQuantity());
                 performOperation(tradingInfoDTO, cryptoTradingDTO, userWallet, assetList, tradingResponseDTO);
             } else {
                 throw new Exception("Insufficient asset quantity to sell. Current quantity for "
@@ -97,14 +97,15 @@ public class TradingService {
     private void performOperation(TradingInfoDTO tradingInfoDTO, CryptoTradingDTO cryptoTradingDTO,
                                      Wallet userWallet, List<Asset> assetList,
                                      TradingResponseDTO tradingResponseDTO) throws Exception {
-        BigDecimal requiredAmount = null;
+        BigDecimal requiredAmount;
         if(ActionType.BUY.equals(tradingInfoDTO.getActionType())){
             requiredAmount  = cryptoTradingDTO.getBestBuyPrice()
                     .multiply(BigDecimal.valueOf(tradingInfoDTO.getRequestQuantity()));
             if (userWallet.getBalance().compareTo(requiredAmount) < 0) {
                 throw new Exception("Insufficient balance. Current wallet balance is "
-                        + userWallet.getBalanceCurrency() + userWallet.getBalance().toPlainString()
-                        + ". Still require " + userWallet.getBalanceCurrency()
+                        + userWallet.getBalanceCurrency() + " " + userWallet.getBalance().toPlainString()
+                        + ". \r\nTotal amount required is " + userWallet.getBalanceCurrency() + " "
+                        + requiredAmount + ". \r\nMissing " + userWallet.getBalanceCurrency() + " "
                         + requiredAmount.subtract(userWallet.getBalance())
                 );
             }
@@ -118,7 +119,7 @@ public class TradingService {
             if (!assetOptional.isPresent()) {
                 throw new Exception("No asset to sell");
             } else if(assetOptional.get().getQuantity() < tradingInfoDTO.getRequestQuantity()){
-                throw new Exception("Insufficient asset to sell. Current number owned asset(s) is/are " + assetOptional.get().getQuantity());
+                throw new Exception("Insufficient asset to sell. \r\nCurrent number owned asset(s) is/are " + assetOptional.get().getQuantity());
             }
             requiredAmount = cryptoTradingDTO.getBestSellPrice()
                     .multiply(BigDecimal.valueOf(tradingInfoDTO.getRequestQuantity()));
