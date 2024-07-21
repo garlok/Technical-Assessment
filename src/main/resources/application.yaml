@@ -23,8 +23,13 @@ spring:
     disable-swagger-default-url: true
     packageToScan: com.ms.assessment.controller
 
-scheduler:
-  fixedRate: 10000
+com:
+  ms:
+    assessment:
+      scheduler:
+        fixedRate: 10000
+      isAssumption3: true
+      only-certain-trading: ETHUSDT,BTCUSDT
 
 logging:
   pattern:

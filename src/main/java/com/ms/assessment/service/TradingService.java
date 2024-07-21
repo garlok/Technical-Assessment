@@ -16,6 +16,7 @@ import com.ms.assessment.repository.UsersRepository;
 import com.ms.assessment.repository.WalletRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -46,10 +47,23 @@ public class TradingService {
     @Autowired
     TradeHistoryRepository tradeHistoryRepository;
 
+    @Value("${com.ms.assessment.isAssumption3:false}")
+    boolean isAssumption3;
+
+    @Value("${com.ms.assessment.only-certain-trading:BTCUSDT}")
+    List<String> onlyCertainTrading;
+
     public TradingResponseDTO performTrade(TradeRequestDTO tradeRequestDTO, ActionType actionType) throws Exception {
 
         Wallet userWallet = walletRepository.findByUserUserName(tradeRequestDTO.getUserName())
                 .orElseThrow(() -> new NoSuchElementException("User wallet not found"));
+
+        if(isAssumption3){
+           if(!onlyCertainTrading.contains(tradeRequestDTO.getSymbol())){
+               log.info("Ethereum - ETHUSDT and Bitcoin - BTCUSDT pairs of crypto trading supported for trading");
+               throw new Exception("Ethereum - ETHUSDT and Bitcoin - BTCUSDT pairs of crypto trading supported for trading");
+           }
+        }
 
         CryptoPricing cryptoPricing = pricingRepository.findBySymbol(tradeRequestDTO.getSymbol())
                 .orElseThrow(() -> new NoSuchElementException("Symbol not found"));
