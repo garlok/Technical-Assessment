@@ -14,10 +14,10 @@ public class SchedulerConfig {
     @Autowired
     PricingService pricingService;
 
-    @Value("${scheduler.fixedRate}")
+    @Value("${com.ms.assessment.scheduler.fixedRate:10000}")
     private long rate;
 
-    @Scheduled(fixedRateString = "${scheduler.fixedRate}")
+    @Scheduled(fixedRateString = "${com.ms.assessment.scheduler.fixedRate}")
     public void fixedRateSceduler(){
         pricingService.fetchAndSavePricing();;
     }

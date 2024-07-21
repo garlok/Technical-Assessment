@@ -36,10 +36,10 @@ public class TradingResponseDTO {
     private BigDecimal sellPrice;
 
     @JsonProperty(value = "Asset Buy/Ask Quantity")
-    private int assetsBuyQuantity;
+    private Integer assetsBuyQuantity;
 
     @JsonProperty(value = "Asset Sell/Bid Quantity")
-    private int assetsSellQuantity;
+    private Integer assetsSellQuantity;
 
     @JsonProperty(value = "Currency")
     private String currency;
