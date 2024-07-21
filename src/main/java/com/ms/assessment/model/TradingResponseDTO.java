@@ -54,9 +54,9 @@ public class TradingResponseDTO {
     @JsonProperty(value = "Wallet Balance")
     private BigDecimal balance;
 
-    @JsonProperty(value = "Message")
-    private String message;
-
     @JsonProperty(value = "Trade time")
     private OffsetDateTime tradeTime;
+
+    @JsonProperty(value = "Message")
+    private String message;
 }
