@@ -8,6 +8,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class TradeRequestDTO {
+
     private String userName;
     private String symbol;
     private int buyQuantity;

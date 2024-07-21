@@ -27,11 +27,15 @@ public class CryptoPricing {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
+
     private String symbol;
+
     @Column(precision = 30, scale = 8)
     private BigDecimal bestSellPrice;
+
     @Column(precision = 30, scale = 8)
     private BigDecimal bestBuyPrice;
+
     private int sellQuantity;
     private int buyQuantity;
 }

@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.OffsetDateTime;
+
 @Getter
 @Setter
 @Builder
@@ -14,4 +16,5 @@ public class TradingInfoDTO {
     private int requestQuantity;
     private String requestUserName;
     private ActionType actionType;
+    private OffsetDateTime tradeTime;
 }

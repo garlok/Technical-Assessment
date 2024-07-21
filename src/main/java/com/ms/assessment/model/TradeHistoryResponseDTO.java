@@ -1,6 +1,5 @@
 package com.ms.assessment.model;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -16,47 +15,40 @@ import java.time.OffsetDateTime;
 @Getter
 @Setter
 @Builder
-@JsonInclude(JsonInclude.Include.NON_NULL)
-public class TradingResponseDTO {
+public class TradeHistoryResponseDTO {
 
     @JsonProperty(value = "User Name")
     private String userName;
+
+
+    @JsonProperty(value = "Action Type")
+    private String actionType;
 
     @JsonProperty(value = "Symbol")
     private String symbol;
 
     @JsonSerialize(using = BigDecimalSerializer.class)
     @JsonDeserialize(using = BigDecimalDeserializer.class)
-    @JsonProperty(value = "Buy/Ask Price")
-    private BigDecimal buyPrice;
+    @JsonProperty(value = "Symbol Price")
+    private BigDecimal symbolPrice;
 
-    @JsonSerialize(using = BigDecimalSerializer.class)
-    @JsonDeserialize(using = BigDecimalDeserializer.class)
-    @JsonProperty(value = "Sell/Bid Price")
-    private BigDecimal sellPrice;
-
-    @JsonProperty(value = "Asset Buy/Ask Quantity")
-    private int assetsBuyQuantity;
-
-    @JsonProperty(value = "Asset Sell/Bid Quantity")
-    private int assetsSellQuantity;
+    @JsonProperty(value = "Quantity")
+    private int quantity;
 
     @JsonProperty(value = "Currency")
     private String currency;
 
     @JsonSerialize(using = BigDecimalSerializer.class)
     @JsonDeserialize(using = BigDecimalDeserializer.class)
-    @JsonProperty(value = "Amount Spent")
-    private BigDecimal amountSpent;
+    @JsonProperty(value = "Amount")
+    private BigDecimal amount;
 
     @JsonSerialize(using = BigDecimalSerializer.class)
     @JsonDeserialize(using = BigDecimalDeserializer.class)
-    @JsonProperty(value = "Wallet Balance")
+    @JsonProperty(value = "Balance")
     private BigDecimal balance;
 
-    @JsonProperty(value = "Trade time")
+    @JsonProperty(value = "Trade Time")
     private OffsetDateTime tradeTime;
 
-    @JsonProperty(value = "Message")
-    private String message;
 }

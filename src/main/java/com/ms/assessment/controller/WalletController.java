@@ -20,10 +20,10 @@ public class WalletController {
     @Autowired
     WalletService walletService;
 
+    @GetMapping(ResourcePath.GET_BALANCE_API_URL)
     @Operation(summary = "To retrieve the user’s crypto currencies wallet balance",
             description = "To retrieve the user’s crypto currencies wallet balance")
-    @GetMapping(ResourcePath.GET_BALANCE_API_URL)
-    public ResponseEntity<?> getWalletByUserName(@PathVariable String userName) throws Exception {
+    public ResponseEntity<?> getWalletByUserName(@PathVariable String userName) {
         try {
             WalletResponseDTO walletResponseDTO = walletService.getWalletByUserName(userName);
             return ResponseEntity.ok(walletResponseDTO);

@@ -9,4 +9,5 @@ public class ResourcePath {
     public static final String LISTING = "/listing";
     public static final String TRADING = "/api/trading";
     public static final String PERFORM = "/perform/{actionType}";
+    public static final String TRADING_HISTORY = "/api/trading-history";
 }

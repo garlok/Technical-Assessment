@@ -24,13 +24,17 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Asset {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
+
     private String symbol;
     private int quantity;
+
     @ManyToOne
     @JoinColumn(name = "userName", referencedColumnName = "userName", nullable = false)
     private Users user;
+
     private OffsetDateTime updatedTime;
 }

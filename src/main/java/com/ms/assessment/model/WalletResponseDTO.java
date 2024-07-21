@@ -21,8 +21,10 @@ public class WalletResponseDTO {
 
     @JsonProperty(value = "User Name")
     private String userName;
+
     @JsonProperty(value = "Balance")
     private BigDecimal balance;
+
     @JsonProperty(value = "Balance Currency")
     private String currency;
 

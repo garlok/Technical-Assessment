@@ -18,8 +18,10 @@ import java.util.Optional;
 @Slf4j
 @Service
 public class WalletService {
+
     @Autowired
     WalletRepository walletRepository;
+
     @Autowired
     AssetRepository assetRepository;
 

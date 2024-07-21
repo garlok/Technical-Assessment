@@ -21,12 +21,13 @@ import static com.ms.assessment.constants.ResourcePath.PRICE;
 @RestController
 @RequestMapping(PRICE)
 public class PricingController {
+
     @Autowired
     PricingService pricingService;
 
+    @GetMapping(LISTING)
     @Operation(summary = "To get latest Crypto Trading Listing with the best price",
             description = "To get latest Crypto Trading Listing with the best price")
-    @GetMapping(LISTING)
     public ResponseEntity<?> getLatestBestPrice(@RequestParam(value = "cryptoTrading", required = false) String symbol) {
         try {
             List<CryptoTradingDTO> cryptoTradingDTOList = pricingService.getLatestBestAggregatedPrice(symbol);
