@@ -1,0 +1,38 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:technical-test
+    driverClassName: org.h2.Driver
+    username: sa
+    password: password
+  h2:
+    console:
+      enabled: true
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate.format_sql: false
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+  swagger-ui:
+    enabled: true
+    url: /v3/api-docs
+    disable-swagger-default-url: true
+    packageToScan: com.ms.assessment.controller
+
+com:
+  ms:
+    assessment:
+      scheduler:
+        fixedRate: 10000
+      isAssumption3: true
+      only-certain-trading: ETHUSDT,BTCUSDT
+
+logging:
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss, Asia/Singapore} [%blue(%t)] %yellow(%C{1.}): %replace(%msg){'[\n\r\t]','-'}%n%throwable"
+  level:
+    root: INFO
