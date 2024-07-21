@@ -1,0 +1,228 @@
+{
+	"info": {
+		"_postman_id": "e69f3eea-9105-4cea-bcd7-f80736b4aa5d",
+		"name": "Technical Assessment",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "18597621"
+	},
+	"item": [
+		{
+			"name": "Task 2",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/price/listing?cryptoTrading=BTCUSDT",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"price",
+						"listing"
+					],
+					"query": [
+						{
+							"key": "cryptoTrading",
+							"value": "BTCUSDT"
+						},
+						{
+							"key": "cryptoTrading",
+							"value": "ETHUSDT",
+							"disabled": true
+						},
+						{
+							"key": "cryptoTrading",
+							"value": "LTCBTC",
+							"disabled": true
+						},
+						{
+							"key": "cryptoTrading",
+							"value": "NEOBTC",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Task3 Buy ETHUSDT",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"userName\": \"Tester Tester\",\r\n    \"symbol\": \"ETHUSDT\",\r\n    \"buyQuantity\": 2,\r\n    \"sellQuantity\": 0\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/trading/perform/BUY",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"trading",
+						"perform",
+						"BUY"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Task3 Buy NEOBTC",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"userName\": \"Tester Tester\",\r\n    \"symbol\": \"NEOBTC\",\r\n    \"buyQuantity\": 2,\r\n    \"sellQuantity\": 0\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/trading/perform/BUY",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"trading",
+						"perform",
+						"BUY"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Task3 Sell ETHUSDT",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"userName\": \"Tester Tester\",\r\n    \"symbol\": \"ETHUSDT\",\r\n    \"buyQuantity\": 0,\r\n    \"sellQuantity\": 3\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/trading/perform/SELL",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"trading",
+						"perform",
+						"SELL"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Task3 Sell NEOBTC",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"userName\": \"Tester Tester\",\r\n    \"symbol\": \"NEOBTC\",\r\n    \"buyQuantity\": 0,\r\n    \"sellQuantity\": 2\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/trading/perform/SELL",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"trading",
+						"perform",
+						"SELL"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Task 4",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/wallet/balance/Tester Tester",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"wallet",
+						"balance",
+						"Tester Tester"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Task5",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"userName\" : \"Tester Tester\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/trading-history/listing",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"trading-history",
+						"listing"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
