@@ -40,7 +40,7 @@ public class WalletService {
                 return WalletResponseDTO.builder()
                         .userName(wallets.get().getUser().getUserName())
                         .balance(wallets.get().getBalance())
-                        .currency(wallets.get().getCurrency())
+                        .currency(wallets.get().getBalanceCurrency())
                         .assetList(assetDTOList.isEmpty() ? null : assetDTOList)
                         .build();
             } else{

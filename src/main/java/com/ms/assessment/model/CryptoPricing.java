@@ -22,7 +22,7 @@ import java.util.UUID;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Pricing {
+public class CryptoPricing {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

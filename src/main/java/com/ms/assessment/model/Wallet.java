@@ -33,6 +33,6 @@ public class Wallet {
 
     @Column(precision = 30, scale = 8)
     private BigDecimal balance;
-    private String currency;
+    private String balanceCurrency;
     private OffsetDateTime updatedTime;
 }
