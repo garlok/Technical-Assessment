@@ -50,7 +50,7 @@ public class TradingService {
     @Value("${com.ms.assessment.isAssumption3:false}")
     boolean isAssumption3;
 
-    @Value("${com.ms.assessment.only-certain-trading:BTCUSDT}")
+    @Value("${com.ms.assessment.only-certain-trading:ETHUSDT,BTCUSDT}")
     List<String> onlyCertainTrading;
 
     public TradingResponseDTO performTrade(TradeRequestDTO tradeRequestDTO, ActionType actionType) throws Exception {
