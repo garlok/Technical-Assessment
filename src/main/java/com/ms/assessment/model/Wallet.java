@@ -12,7 +12,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.UUID;
@@ -27,12 +27,12 @@ public class Wallet {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "userName", referencedColumnName = "userName", nullable = false)
     private Users user;
 
-    @Column(precision = 19, scale = 6)
+    @Column(precision = 30, scale = 8)
     private BigDecimal balance;
     private String currency;
-    private OffsetDateTime updatedAt;
+    private OffsetDateTime updatedTime;
 }

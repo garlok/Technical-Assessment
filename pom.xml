@@ -8,7 +8,7 @@
     <packaging>jar</packaging>
 
     <name>technical-assessment</name>
-    <description>Aquariux Technical Assessment</description>
+    <description>Technical Assessment</description>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -58,7 +58,6 @@
             <artifactId>springdoc-openapi-ui</artifactId>
             <version>1.6.8</version> <!-- Check for the latest version if needed -->
         </dependency>
-
     </dependencies>
 
     <repositories>

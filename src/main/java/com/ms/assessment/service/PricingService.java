@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -57,6 +58,8 @@ public class PricingService {
                 if (existingPricing != null) {
                     existingPricing.setBestSellPrice(binanceResponseDTO.getSell());
                     existingPricing.setBestBuyPrice(binanceResponseDTO.getBuy());
+                    existingPricing.setSellQuantity(binanceResponseDTO.getSellQuantity().intValue());
+                    existingPricing.setBuyQuantity(binanceResponseDTO.getBuyQuantity().intValue());
                     updatedPricings.add(existingPricing);
                 } else {
                     //To add a new one into the lists
@@ -70,7 +73,7 @@ public class PricingService {
             huobiResponseDTO.getData().forEach(huobiDTO -> {
                 String symbol = huobiDTO.getSymbol().toUpperCase();
 
-                //To check binance list is existed in the list
+                //To check huobi list is existed in the list
                 Pricing existingPricing = updatedPricings.stream()
                         .filter(pricing -> pricing.getSymbol().equals(symbol))
                         .findFirst()
@@ -78,12 +81,17 @@ public class PricingService {
                 if (existingPricing != null) {
                     //check the existing price and update
                     updateBestPricing(existingPricing, huobiDTO.getSell(), huobiDTO.getBuy());
+                    existingPricing.setBuyQuantity(huobiDTO.getBuyQuantity().intValue());
+                    existingPricing.setSellQuantity(huobiDTO.getSellQuantity().intValue());
+
                 } else {
                     symbolsInApiResponses.add(symbol);
                     existingPricing = pricingMap.get(symbol);
                     if (existingPricing != null) {
                         existingPricing.setBestBuyPrice(huobiDTO.getBuy());
                         existingPricing.setBestSellPrice(huobiDTO.getSell());
+                        existingPricing.setSellQuantity(huobiDTO.getSellQuantity().intValue());
+                        existingPricing.setBuyQuantity(huobiDTO.getBuyQuantity().intValue());
                     } else {
                         Pricing newPricing = getNewPricing(null, huobiDTO);
                         updatedPricings.add(newPricing);
@@ -105,11 +113,13 @@ public class PricingService {
     }
 
     public List<CryptoTradingDTO> getLatestBestAggregatedPrice(String symbol) {
-        List<Pricing> pricingList;
+        List<Pricing> pricingList = new ArrayList<>();
         List<CryptoTradingDTO> cryptoTradingDTOList = new ArrayList<>();
 
         if (ObjectUtils.isNotEmpty(symbol)) {
-            pricingList = pricingRepository.findBySymbol(symbol);
+             Pricing pricing = pricingRepository.findBySymbol(symbol)
+                    .orElseThrow(() -> new NoSuchElementException("Symbol not found"));
+            pricingList.add(pricing);
         } else {
             pricingList = pricingRepository.findAll();
         }
@@ -120,6 +130,8 @@ public class PricingService {
                         .symbol(pricing.getSymbol())
                         .bestSellPrice(pricing.getBestSellPrice())
                         .bestBuyPrice(pricing.getBestBuyPrice())
+                        .buyQuantity(pricing.getBuyQuantity())
+                        .sellQuantity(pricing.getSellQuantity())
                         .build();
                 cryptoTradingDTOList.add(cryptoTradingDTO);
             });
@@ -161,24 +173,32 @@ public class PricingService {
 
     private static Pricing getNewPricing(BinanceResponseDTO binanceResponseDTO, HuobiDTO huobiDTO) {
         String symbol = "";
-        BigDecimal askPrice = null;
-        BigDecimal bidPrice = null;
+        BigDecimal buyPrice = null;
+        BigDecimal sellPrice = null;
+        int buyQuantity = 0;
+        int sellQuantity = 0;
 
         if(binanceResponseDTO != null){
             symbol = binanceResponseDTO.getSymbol().toUpperCase();
-            askPrice = binanceResponseDTO.getBuy();
-            bidPrice = binanceResponseDTO.getSell();
+            buyPrice = binanceResponseDTO.getBuy();
+            sellPrice = binanceResponseDTO.getSell();
+            buyQuantity = binanceResponseDTO.getBuyQuantity().intValue();
+            sellQuantity = binanceResponseDTO.getSellQuantity().intValue();
         } else if (huobiDTO != null){
             symbol = huobiDTO.getSymbol().toUpperCase();
-            askPrice = huobiDTO.getBuy();
-            bidPrice = huobiDTO.getSell();
+            buyPrice = huobiDTO.getBuy();
+            sellPrice = huobiDTO.getSell();
+            buyQuantity = huobiDTO.getBuyQuantity().intValue();
+            sellQuantity = huobiDTO.getSellQuantity().intValue();
         }
 
         return Pricing.builder()
                 .id(UUID.randomUUID())
                 .symbol(symbol)
-                .bestBuyPrice(askPrice)
-                .bestSellPrice(bidPrice)
+                .bestBuyPrice(buyPrice)
+                .bestSellPrice(sellPrice)
+                .buyQuantity(buyQuantity)
+                .sellQuantity(sellQuantity)
                 .build();
     }
 
