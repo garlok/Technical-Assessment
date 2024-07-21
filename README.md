@@ -56,30 +56,26 @@ The application uses an H2 in-memory database. You can access the H2 console to 
     ```http
     GET /api/prices/listing?symbol={symbol}
     ```
-	```cURL
-	curl --location 'http://localhost:8080/api/prices/listing'
-	curl --location 'http://localhost:8080/api/prices/listing?cryptoTrading=BTCUSDT'
-    ```
     Fetches the latest best aggregated price for the given symbol. If no symbol is provided, it returns the prices for all available symbols.
 	
 		
 - **Execute Trade**
 
     ```http
-    POST /api/trades/execute
+    POST /api/trading/perform/{actionType}
     ```
-
-    Executes a trade based on the latest best aggregated price. The request body should include the user name, symbol, amount, and trade type (BUY/SELL).
+    Executes a trade based on the latest best aggregated price and the given actionType(BUY/SELL). 
+	The request body should include the user name, symbol, buyQuantity, and sellQuantity.
 
     Example Request Body:
 
     ```json
     {
-        "userName": "tester",
-        "symbol": "ETHBTC",
-        "amount": 0.5,
-        "tradeType": "BUY"
-    }
+    "userName": "Tester Tester",
+    "symbol": "ETHUSDT",
+    "buyQuantity": 2,
+    "sellQuantity": 0
+	}
     ```
 	
 - **Get Wallet Balance**
@@ -87,23 +83,15 @@ The application uses an H2 in-memory database. You can access the H2 console to 
     ```http
     GET /api/wallets/balance/{userName}
     ```
-    ```cURL
-    curl --location 'http://localhost:8080/api/wallets/balance/tester'
-    ```
 
     Retrieves the wallet balance for the specified userName.
 
     Example:
 
     ```http
-    GET /api/wallets/balance/tester
+    GET /api/wallets/balance/Tester tester
 	```
 
 ### Preloading Data
 
 You can preload data into the H2 database by executing the following SQL statements in the H2 console or adding them to the `data.sql` file in the `src/main/resources` directory:
-
-```sql
-INSERT INTO users (id, user_name) VALUES ('1d4e2e4b-8c1e-4c9b-b5ad-1a229d66d1d8', 'tester');
-INSERT INTO wallet (id, user_id, balance, updated_at) VALUES ('2f4e6b7a-6e2f-4c89-ae2c-3d6f1a26e2d2', '1d4e2e4b-8c1e-4c9b-b5ad-1a229d66d1d8', 1000.00, CURRENT_TIMESTAMP);
-```
