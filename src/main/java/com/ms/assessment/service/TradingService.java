@@ -47,6 +47,10 @@ public class TradingService {
     TradeHistoryRepository tradeHistoryRepository;
 
     public TradingResponseDTO performTrade(TradeRequestDTO tradeRequestDTO, ActionType actionType) throws Exception {
+
+        Wallet userWallet = walletRepository.findByUserUserName(tradeRequestDTO.getUserName())
+                .orElseThrow(() -> new NoSuchElementException("User wallet not found"));
+
         CryptoPricing cryptoPricing = pricingRepository.findBySymbol(tradeRequestDTO.getSymbol())
                 .orElseThrow(() -> new NoSuchElementException("Symbol not found"));
 
@@ -58,8 +62,6 @@ public class TradingService {
                 .sellQuantity(cryptoPricing.getSellQuantity())
                 .build();
 
-        Wallet userWallet = walletRepository.findByUserUserName(tradeRequestDTO.getUserName())
-                .orElseThrow(() -> new NoSuchElementException("User wallet not found"));
         List<Asset> assetList = assetRepository.findByUserUserName(tradeRequestDTO.getUserName());
 
         TradingInfoDTO tradingInfoDTO = TradingInfoDTO.builder()
