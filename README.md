@@ -48,6 +48,11 @@ The application uses an H2 in-memory database. You can access the H2 console to 
     - **JDBC URL**: `jdbc:h2:mem:testdb`
     - **Username**: `sa`
     - **Password**: `password`
+	
+	
+### PostMan API
+
+Postman colletion is being exported and included in the `src/main/resources` directory:
 
 
 ### Configuration/Flag Properties
