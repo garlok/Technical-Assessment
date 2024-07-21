@@ -49,6 +49,38 @@ The application uses an H2 in-memory database. You can access the H2 console to 
     - **Username**: `sa`
     - **Password**: `password`
 
+
+### Configuration/Flag Properties
+
+- **Assumption 3 Flag**
+
+	Description: This property determines whether certain trading assumptions are applied. If set to true, additional validation for trading symbols will be enforced.
+	1. Property: com.ms.assessment.isAssumption3
+	2. Type: boolean
+	3. Default Value: false (if not specified)
+
+
+- **Allowed Trading Symbols**
+
+	Description: A comma-separated list of trading symbols that are allowed for trading. If com.ms.assessment.isAssumption3 is set to true, only symbols listed here are supported.
+	1. Property: com.ms.assessment.only-certain-trading
+	2. Type: String (comma-separated list)
+	3. Default Value: ETHUSDT,BTCUSDT
+	
+	
+- **Scheduler Fixed Rate**
+
+	Description: The fixed rate interval for a scheduled task to retrieve pricing data from the source and store the best pricing in the database. This interval is set to 10 seconds by default.
+	1. Property: com.ms.assessment.scheduler.fixedRate
+	2. Type: long (in milliseconds)
+	3. Default Value: 10000 (10 seconds)
+
+	
+### Preloading Data
+
+You can preload data into the H2 database by executing the following SQL statements in the H2 console or adding them to the `data.sql` file in the `src/main/resources` directory:
+
+
 ### API Endpoints
 
 - **Get Latest Best Price**
@@ -92,6 +124,18 @@ The application uses an H2 in-memory database. You can access the H2 console to 
     GET /api/wallets/balance/Tester tester
 	```
 
-### Preloading Data
+- **Get Trading History**
 
-You can preload data into the H2 database by executing the following SQL statements in the H2 console or adding them to the `data.sql` file in the `src/main/resources` directory:
+    ```http
+    POST /api/trading-history/listing
+    ```
+
+    Retrieves the list of trading that had been performed.
+
+    Example Request Body:
+
+    ```json
+    {
+    "userName" : "Tester Tester"
+	}
+    ```
