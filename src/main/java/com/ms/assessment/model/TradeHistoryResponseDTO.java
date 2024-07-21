@@ -27,6 +27,14 @@ public class TradeHistoryResponseDTO {
     @JsonProperty(value = "Symbol")
     private String symbol;
 
+    @JsonSerialize(using = BigDecimalSerializer.class)
+    @JsonDeserialize(using = BigDecimalDeserializer.class)
+    @JsonProperty(value = "Symbol Price")
+    private BigDecimal symbolPrice;
+
+    @JsonProperty(value = "Quantity")
+    private int quantity;
+
     @JsonProperty(value = "Currency")
     private String currency;
 
@@ -39,14 +47,6 @@ public class TradeHistoryResponseDTO {
     @JsonDeserialize(using = BigDecimalDeserializer.class)
     @JsonProperty(value = "Balance")
     private BigDecimal balance;
-
-    @JsonProperty(value = "Quantity")
-    private int quantity;
-
-    @JsonSerialize(using = BigDecimalSerializer.class)
-    @JsonDeserialize(using = BigDecimalDeserializer.class)
-    @JsonProperty(value = "Symbol Price")
-    private BigDecimal symbolPrice;
 
     @JsonProperty(value = "Trade Time")
     private OffsetDateTime tradeTime;

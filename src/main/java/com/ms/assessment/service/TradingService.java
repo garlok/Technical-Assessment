@@ -112,7 +112,7 @@ public class TradingService {
                 .user(usersRepository.findByUserName(tradingInfoDTO.getRequestUserName()))
                 .symbol(tradingResponseDTO.getSymbol())
                 .actionType(actionType.name())
-                .currency(tradingResponseDTO.getBalanceCurrency())
+                .currency(tradingResponseDTO.getCurrency())
                 .amount(tradingResponseDTO.getAmountSpent())
                 .balance(tradingResponseDTO.getBalance())
                 .quantity(ActionType.BUY.equals(actionType) ? tradingResponseDTO.getAssetsBuyQuantity() : tradingResponseDTO.getAssetsSellQuantity())
@@ -160,7 +160,7 @@ public class TradingService {
         }
         tradingResponseDTO.setAmountSpent(requiredAmount);
         tradingResponseDTO.setBalance(userWallet.getBalance());
-        tradingResponseDTO.setBalanceCurrency(userWallet.getBalanceCurrency());
+        tradingResponseDTO.setCurrency(userWallet.getBalanceCurrency());
         updateAssetList(assetList, tradingInfoDTO);
         walletRepository.save(userWallet);
         assetRepository.saveAll(assetList);
