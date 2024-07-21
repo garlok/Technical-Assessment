@@ -21,9 +21,11 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Users implements Serializable {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
+
     @Column(name = "userName", unique = true, nullable = false)
     private String userName;
 }

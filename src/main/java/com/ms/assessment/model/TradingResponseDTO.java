@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.time.OffsetDateTime;
 
 @Getter
 @Setter
@@ -33,8 +34,8 @@ public class TradingResponseDTO {
     @JsonProperty(value = "Asset Sell/Bid Quantity")
     private int assetsSellQuantity;
 
-    @JsonProperty(value = "Total Amount Spent")
-    private BigDecimal totalAmount;
+    @JsonProperty(value = "Amount Spent")
+    private BigDecimal amountSpent;
 
     @JsonProperty(value = "Wallet Balance")
     private BigDecimal balance;
@@ -44,4 +45,7 @@ public class TradingResponseDTO {
 
     @JsonProperty(value = "Message")
     private String message;
+
+    @JsonProperty(value = "Trade time")
+    private OffsetDateTime tradeTime;
 }

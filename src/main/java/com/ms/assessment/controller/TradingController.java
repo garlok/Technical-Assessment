@@ -5,6 +5,7 @@ import com.ms.assessment.model.TradeRequestDTO;
 import com.ms.assessment.model.TradingResponseDTO;
 import com.ms.assessment.model.enums.ActionType;
 import com.ms.assessment.service.TradingService;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -27,6 +28,7 @@ public class TradingController {
     TradingService tradingService;
 
     @PostMapping(PERFORM)
+    @Operation(summary = "To perform trading actions", description = "To perform trading actions")
     public ResponseEntity<?> performTrade(@RequestBody TradeRequestDTO tradeRequestDTO, @PathVariable ActionType actionType) {
         try {
             TradingResponseDTO tradingResponseDTO = tradingService.performTrade(tradeRequestDTO, actionType);

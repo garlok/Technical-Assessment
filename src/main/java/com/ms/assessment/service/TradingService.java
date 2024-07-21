@@ -1,8 +1,9 @@
 package com.ms.assessment.service;
 
 import com.ms.assessment.model.Asset;
-import com.ms.assessment.model.CryptoTradingDTO;
 import com.ms.assessment.model.CryptoPricing;
+import com.ms.assessment.model.CryptoTradingDTO;
+import com.ms.assessment.model.TradeHistory;
 import com.ms.assessment.model.TradeRequestDTO;
 import com.ms.assessment.model.TradingInfoDTO;
 import com.ms.assessment.model.TradingResponseDTO;
@@ -10,6 +11,7 @@ import com.ms.assessment.model.Wallet;
 import com.ms.assessment.model.enums.ActionType;
 import com.ms.assessment.repository.AssetRepository;
 import com.ms.assessment.repository.PricingRepository;
+import com.ms.assessment.repository.TradeHistoryRepository;
 import com.ms.assessment.repository.UsersRepository;
 import com.ms.assessment.repository.WalletRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +24,8 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
+
+import static com.ms.assessment.constants.Constants.TRADING_RESPONSE_SUCCESS_MESSAGE;
 
 @Slf4j
 @Service
@@ -38,6 +42,10 @@ public class TradingService {
 
     @Autowired
     UsersRepository usersRepository;
+
+    @Autowired
+    TradeHistoryRepository tradeHistoryRepository;
+
     public TradingResponseDTO performTrade(TradeRequestDTO tradeRequestDTO, ActionType actionType) throws Exception {
         CryptoPricing cryptoPricing = pricingRepository.findBySymbol(tradeRequestDTO.getSymbol())
                 .orElseThrow(() -> new NoSuchElementException("Symbol not found"));
@@ -57,40 +65,62 @@ public class TradingService {
         TradingInfoDTO tradingInfoDTO = TradingInfoDTO.builder()
                 .requestSymbol(tradeRequestDTO.getSymbol())
                 .requestUserName(tradeRequestDTO.getUserName())
+                .tradeTime(OffsetDateTime.now())
                 .build();
         TradingResponseDTO tradingResponseDTO = TradingResponseDTO.builder()
                 .userName(tradingInfoDTO.getRequestUserName())
                 .symbol(tradingInfoDTO.getRequestSymbol())
                 .build();
+
         if (ActionType.BUY.equals(actionType)) {
-            if(tradeRequestDTO.getBuyQuantity() == 0) {
+            if (tradeRequestDTO.getBuyQuantity() == 0) {
+                log.error("Buy quantity cannot be zero");
                 throw new Exception("Buy quantity cannot be zero");
             }
-            if(cryptoTradingDTO.getBuyQuantity() >= tradeRequestDTO.getBuyQuantity()) {
+            if (cryptoTradingDTO.getBuyQuantity() >= tradeRequestDTO.getBuyQuantity()) {
                 tradingInfoDTO.setRequestQuantity(tradeRequestDTO.getBuyQuantity());
                 tradingInfoDTO.setActionType(ActionType.BUY);
                 tradingResponseDTO.setAssetsBuyQuantity(tradeRequestDTO.getBuyQuantity());
                 performOperation(tradingInfoDTO, cryptoTradingDTO, userWallet, assetList, tradingResponseDTO);
             } else {
+                log.error("Insufficient asset quantity to buy/ask");
                 throw new Exception("Insufficient asset quantity to buy/ask. \r\nCurrent quantity for "
                         + cryptoTradingDTO.getSymbol() + " is " + cryptoTradingDTO.getBuyQuantity());
             }
-        } else if (ActionType.SELL.equals(actionType)){
-            if(tradeRequestDTO.getSellQuantity() == 0) {
+        } else if (ActionType.SELL.equals(actionType)) {
+            if (tradeRequestDTO.getSellQuantity() == 0) {
+                log.error("Sell quantity cannot be zero");
                 throw new Exception("Sell quantity cannot be zero.");
             }
-            if(cryptoTradingDTO.getSellQuantity() >= tradeRequestDTO.getSellQuantity()) {
+            if (cryptoTradingDTO.getSellQuantity() >= tradeRequestDTO.getSellQuantity()) {
                 tradingInfoDTO.setRequestQuantity(tradeRequestDTO.getSellQuantity());
                 tradingInfoDTO.setActionType(ActionType.SELL);
                 tradingResponseDTO.setAssetsSellQuantity(tradeRequestDTO.getSellQuantity());
                 performOperation(tradingInfoDTO, cryptoTradingDTO, userWallet, assetList, tradingResponseDTO);
             } else {
-                throw new Exception("Insufficient asset quantity to sell. Current quantity for "
+                log.error("Insufficient asset quantity to sell");
+                throw new Exception("Insufficient asset quantity to sell. \r\nCurrent quantity for "
                         + cryptoTradingDTO.getSymbol() + " is " + cryptoTradingDTO.getSellQuantity());
             }
         }
 
-        tradingResponseDTO.setMessage("Trade Successful");
+        tradingResponseDTO.setTradeTime(tradingInfoDTO.getTradeTime());
+        tradingResponseDTO.setMessage(TRADING_RESPONSE_SUCCESS_MESSAGE);
+
+        // Save trade history
+        TradeHistory tradeHistory = TradeHistory.builder()
+                .user(usersRepository.findByUserName(tradingInfoDTO.getRequestUserName()))
+                .symbol(tradingResponseDTO.getSymbol())
+                .actionType(actionType.name())
+                .currency(tradingResponseDTO.getBalanceCurrency())
+                .amount(tradingResponseDTO.getAmountSpent())
+                .balance(tradingResponseDTO.getBalance())
+                .quantity(ActionType.BUY.equals(actionType) ? tradingResponseDTO.getAssetsBuyQuantity() : tradingResponseDTO.getAssetsSellQuantity())
+                .symbolPrice(ActionType.BUY.equals(actionType) ? tradingResponseDTO.getBuyPrice() : tradingResponseDTO.getSellPrice())
+                .tradeTime(tradingResponseDTO.getTradeTime())
+                .build();
+
+        tradeHistoryRepository.save(tradeHistory);
         return tradingResponseDTO;
     }
 
@@ -116,17 +146,19 @@ public class TradingService {
                     .filter(asset -> asset.getSymbol().equals(tradingInfoDTO.getRequestSymbol()))
                     .findFirst();
 
-            if (!assetOptional.isPresent()) {
-                throw new Exception("No asset to sell");
+            if (assetOptional.isEmpty()) {
+                log.error("No owned asset to sell");
+                throw new Exception("No owned asset to sell");
             } else if(assetOptional.get().getQuantity() < tradingInfoDTO.getRequestQuantity()){
-                throw new Exception("Insufficient asset to sell. \r\nCurrent number owned asset(s) is/are " + assetOptional.get().getQuantity());
+                log.error("Insufficient owned asset to sell");
+                throw new Exception("Insufficient owned asset to sell. \r\nCurrent number owned asset(s) is/are " + assetOptional.get().getQuantity());
             }
             requiredAmount = cryptoTradingDTO.getBestSellPrice()
                     .multiply(BigDecimal.valueOf(tradingInfoDTO.getRequestQuantity()));
             tradingResponseDTO.setSellPrice(cryptoTradingDTO.getBestSellPrice());
             userWallet.setBalance(userWallet.getBalance().add(requiredAmount));
         }
-        tradingResponseDTO.setTotalAmount(requiredAmount);
+        tradingResponseDTO.setAmountSpent(requiredAmount);
         tradingResponseDTO.setBalance(userWallet.getBalance());
         tradingResponseDTO.setBalanceCurrency(userWallet.getBalanceCurrency());
         updateAssetList(assetList, tradingInfoDTO);
@@ -143,7 +175,7 @@ public class TradingService {
                              currentQuantity + tradingInfoDTO.getRequestQuantity() :
                              currentQuantity - tradingInfoDTO.getRequestQuantity();
                      asset.setQuantity(newQuantity);
-                     asset.setUpdatedTime(OffsetDateTime.now());
+                     asset.setUpdatedTime(tradingInfoDTO.getTradeTime());
                      return true;
                 })
                 .orElse(false);
@@ -153,7 +185,8 @@ public class TradingService {
                     .symbol(tradingInfoDTO.getRequestSymbol())
                     .quantity(tradingInfoDTO.getRequestQuantity())
                     .user(usersRepository.findByUserName(tradingInfoDTO.getRequestUserName()))
-                    .updatedTime(OffsetDateTime.now()).build();
+                    .updatedTime(tradingInfoDTO.getTradeTime())
+                    .build();
             assetList.add(newAsset);
         }
     }

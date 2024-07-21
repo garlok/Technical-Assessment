@@ -109,6 +109,7 @@ public class PricingService {
 
         //To delete in the database
         log.info("[pricingService] toRemove.size(): {}", toRemove.size());
+        pricingRepository.deleteAll(toRemove);
     }
 
     public List<CryptoTradingDTO> getLatestBestAggregatedPrice(String symbol) {
@@ -170,7 +171,7 @@ public class PricingService {
         }
     }
 
-    private static CryptoPricing getNewPricing(BinanceResponseDTO binanceResponseDTO, HuobiDTO huobiDTO) {
+    private CryptoPricing getNewPricing(BinanceResponseDTO binanceResponseDTO, HuobiDTO huobiDTO) {
         String symbol = "";
         BigDecimal buyPrice = null;
         BigDecimal sellPrice = null;
